@@ -111,6 +111,12 @@ html[data-theme="light"] .article-body{color:#374151;}
 /* THEME TOGGLE */
 .theme-toggle{background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;border-radius:5px;padding:5px 8px;display:flex;align-items:center;font-size:17px;line-height:1;transition:all .15s;}
 .theme-toggle:hover{border-color:var(--accent-mid);color:var(--accent);}
+
+/* COMMENTS */
+.comments-section{border-top:1px solid var(--border);padding:48px 60px 64px;}
+.comments-label{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-family:var(--mono);margin-bottom:24px;}
+@media(max-width:900px){.comments-section{padding-left:20px;padding-right:20px;}}
+
 </style>
 </head>
 <body>
@@ -221,6 +227,27 @@ html[data-theme="light"] .article-body{color:#374151;}
 </div>
 </div>
 
+
+<!-- COMMENTS -->
+<div class="comments-section">
+  <div class="comments-label">Discussion</div>
+  <script src="https://giscus.app/client.js"
+          data-repo="yybamba/TechRoadmap"
+          data-repo-id="R_kgDOSy3-_g"
+          data-category="General"
+          data-category-id="DIC_kwDOSy3-_s4C-osD"
+          data-mapping="pathname"
+          data-strict="0"
+          data-reactions-enabled="1"
+          data-emit-metadata="0"
+          data-input-position="bottom"
+          data-theme="dark"
+          data-lang="en"
+          crossorigin="anonymous"
+          async>
+  </script>
+</div>
+
 <!-- NEXT READS -->
 <div class="next-reads">
   <div class="next-label">Continue in Pillar 01</div>
@@ -254,9 +281,24 @@ html[data-theme="light"] .article-body{color:#374151;}
 <script>
 (function(){
   var h=document.documentElement,b=document.getElementById('theme-toggle');
-  function apply(t){h.dataset.theme=t;var i=b.querySelector('i');i.className=t==='dark'?'ph ph-sun':'ph ph-moon';}
+  function giscusTheme(t){
+    var f=document.querySelector('iframe.giscus-frame');
+    if(f) f.contentWindow.postMessage({giscus:{setConfig:{theme:t==='dark'?'dark':'light'}}},'https://giscus.app');
+  }
+  function apply(t){
+    h.dataset.theme=t;
+    var i=b.querySelector('i');
+    i.className=t==='dark'?'ph ph-sun':'ph ph-moon';
+    giscusTheme(t);
+  }
   apply(h.dataset.theme||'dark');
   b.addEventListener('click',function(){var n=h.dataset.theme==='dark'?'light':'dark';localStorage.setItem('theme',n);apply(n);});
+  // Sync Giscus after it loads (iframe may not exist immediately)
+  window.addEventListener('message',function(e){
+    if(e.origin==='https://giscus.app' && e.data && e.data.giscus){
+      giscusTheme(h.dataset.theme||'dark');
+    }
+  });
 })();
 </script>
 </html>
