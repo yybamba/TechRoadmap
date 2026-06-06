@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');</script>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TechRoadmap Academy</title>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+:root{
+  --bg:#0e1117;--surface:#151b25;--surface2:#1c2535;--border:#263044;--border2:#344563;
+  --text:#e2e8f0;--muted:#7a8fa8;--dim:#3f5070;
+  --teal:#3ec9b0;--teal-dim:#1a4a44;--teal-mid:#22a090;
+  --violet:#9d7ff0;--violet-dim:#2a1f50;--violet-mid:#7a5fc4;
+  --blue:#5aadff;--blue-dim:#0f2847;--blue-mid:#3a8fd0;
+  --amber:#f0a030;--amber-dim:#3d2d0a;--amber-mid:#c07820;
+  --coral:#f06060;--coral-dim:#3d1515;--coral-mid:#c04040;
+  --green:#50d080;--green-dim:#0f3020;--green-mid:#30a060;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.75;min-height:100vh;}
+
+/* HERO */
+.hero{
+  background:linear-gradient(180deg,rgba(62,201,176,.06) 0%,transparent 100%);
+  border-bottom:1px solid var(--border);
+  padding:48px 60px 40px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:40px;
+}
+.hero-left{max-width:660px;}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--teal-dim);border:1px solid var(--teal-mid);
+  padding:5px 14px;border-radius:20px;margin-bottom:20px;
+}
+.hero-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pulse 2s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-badge-text{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);font-family:var(--mono);}
+.hero h1{font-size:36px;font-weight:700;color:var(--text);line-height:1.15;margin-bottom:12px;}
+.hero h1 span{color:var(--teal);}
+.hero-sub{font-size:17px;color:var(--muted);line-height:1.8;max-width:560px;}
+.hero-stats{display:flex;gap:24px;margin-top:24px;flex-wrap:wrap;}
+.hero-stat{text-align:center;}
+.hero-stat-num{font-size:26px;font-weight:700;font-family:var(--mono);color:var(--teal);}
+.hero-stat-label{font-size:13px;color:var(--muted);margin-top:2px;}
+.hero-right{flex-shrink:0;}
+.tr-badge{
+  width:100px;height:100px;
+  background:var(--teal-dim);
+  border:2px solid var(--teal-mid);
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  font-family:var(--mono);
+}
+.tr-badge-main{font-size:15px;font-weight:700;color:var(--teal);text-align:center;line-height:1.3;}
+.tr-badge-sub{font-size:11px;color:var(--teal-mid);letter-spacing:.06em;margin-top:4px;}
+
+/* MAIN */
+.main{padding:40px 60px 80px;max-width:1400px;}
+
+/* SECTION HEADERS */
+.section-header{display:flex;align-items:center;gap:12px;margin:36px 0 16px;}
+.section-line{flex:1;height:1px;background:var(--border);}
+.section-label{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 14px;border-radius:3px;}
+
+/* PRIMARY CARDS */
+.primary-card{
+  background:var(--surface);
+  border:1px solid var(--teal-mid);
+  border-radius:12px;
+  padding:24px 28px;
+  display:flex;align-items:center;gap:24px;
+  margin-bottom:12px;
+  text-decoration:none;
+  transition:all .2s;
+  position:relative;overflow:hidden;
+}
+.primary-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--teal-mid),var(--teal));
+}
+.primary-card:hover{border-color:var(--teal);transform:translateY(-2px);box-shadow:0 8px 32px rgba(62,201,176,.12);}
+.primary-card.secondary{border-color:var(--border);}
+.primary-card.secondary::before{background:linear-gradient(90deg,var(--violet-mid),var(--violet));}
+.primary-card.secondary:hover{border-color:var(--violet);box-shadow:0 8px 32px rgba(157,127,240,.1);}
+.pc-icon{width:56px;height:56px;border-radius:10px;background:var(--teal-dim);border:1px solid var(--teal-mid);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.pc-icon.violet{background:var(--violet-dim);border-color:var(--violet-mid);}
+.pc-body{flex:1;}
+.pc-eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:4px;font-family:var(--mono);}
+.pc-eyebrow.violet{color:var(--violet);}
+.pc-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.pc-desc{font-size:15px;color:var(--muted);line-height:1.7;}
+.pc-cta{
+  display:flex;align-items:center;gap:8px;
+  background:var(--teal-mid);color:#0e1117;
+  padding:9px 20px;border-radius:6px;
+  font-size:14px;font-weight:700;font-family:var(--mono);
+  letter-spacing:.05em;text-transform:uppercase;
+  flex-shrink:0;transition:background .15s;
+}
+.pc-cta.violet{background:var(--violet-mid);color:#fff;}
+.primary-card:hover .pc-cta{background:var(--teal);}
+.primary-card.secondary:hover .pc-cta{background:var(--violet);}
+
+/* PILLAR GRID */
+.pillar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:10px;margin-bottom:4px;}
+.pillar-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:18px 20px;
+  text-decoration:none;
+  transition:all .15s;
+  display:flex;align-items:flex-start;gap:14px;
+  border-left:3px solid;
+}
+.pillar-card:hover{background:var(--surface2);transform:translateY(-1px);}
+.pc2-num{font-size:12px;font-weight:700;font-family:var(--mono);color:var(--dim);margin-bottom:3px;}
+.pc2-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.3;}
+.pc2-desc{font-size:14px;color:var(--muted);line-height:1.6;}
+.pc2-tag{font-size:11px;font-family:var(--mono);padding:2px 7px;border-radius:2px;margin-top:8px;display:inline-block;}
+.pc2-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+
+/* FRAMEWORKS GRID */
+.fw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.fw-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:14px 16px;text-decoration:none;transition:all .15s;
+  display:flex;align-items:flex-start;gap:12px;
+}
+.fw-card:hover{background:var(--surface2);border-color:var(--border2);}
+.fw-num{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:var(--mono);flex-shrink:0;}
+.fw-body{flex:1;min-width:0;}
+.fw-id{font-size:11px;font-family:var(--mono);color:var(--dim);margin-bottom:3px;}
+.fw-name{font-size:15px;font-weight:600;color:var(--text);line-height:1.35;}
+.fw-type{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono);}
+.fw-placeholder{
+  background:var(--surface);border:1px dashed var(--border);border-radius:8px;
+  padding:14px 16px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--dim);font-family:var(--mono);
+  min-height:68px;
+}
+
+/* SERIES GRID */
+.series-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;}
+.series-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:16px 18px;text-decoration:none;transition:all .15s;
+  position:relative;overflow:hidden;
+}
+.series-card:hover{background:var(--surface2);border-color:var(--border2);}
+.series-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.series-pillar{font-size:11px;font-family:var(--mono);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+.series-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.35;}
+.series-meta{font-size:13px;color:var(--muted);}
+.series-progress{display:flex;align-items:center;gap:8px;margin-top:10px;}
+.series-dots{display:flex;gap:4px;}
+.series-dot{width:8px;height:8px;border-radius:50%;}
+.series-dot.done{opacity:1;}
+.series-dot.pending{opacity:.25;}
+.series-status{font-size:12px;font-family:var(--mono);color:var(--muted);}
+
+/* WORKFLOW */
+.workflow{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:20px 24px;margin-top:32px;
+  display:flex;gap:0;align-items:stretch;
+}
+.wf-step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 16px;position:relative;}
+.wf-step:not(:last-child)::after{content:'→';position:absolute;right:-8px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:18px;}
+.wf-icon{font-size:26px;margin-bottom:8px;}
+.wf-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.wf-desc{font-size:14px;color:var(--muted);line-height:1.6;}
+
+/* FOOTER */
+.footer{
+  border-top:1px solid var(--border);
+  padding:20px 60px;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:13px;color:var(--dim);font-family:var(--mono);
+}
+
+/* LIGHT THEME */
+html[data-theme="light"]{
+  --bg:#f9fafb;--surface:#ffffff;--surface2:#f3f4f6;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --text:#111827;--muted:#6b7280;--dim:#9ca3af;
+  --teal:#0d9488;--teal-dim:#f0fdfa;--teal-mid:#0f766e;
+  --violet:#7c3aed;--violet-dim:#f5f3ff;--violet-mid:#6d28d9;
+  --amber:#d97706;--amber-dim:#fffbeb;
+  --blue:#2563eb;--blue-dim:#eff6ff;
+}
+html[data-theme="light"] body{background:var(--bg);}
+
+/* THEME TOGGLE */
+.theme-toggle{background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;border-radius:5px;padding:5px 8px;display:flex;align-items:center;font-size:17px;line-height:1;transition:all .15s;}
+.theme-toggle:hover{border-color:var(--teal-mid);color:var(--teal);}
+/* TOPBAR */
+.topbar-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 60px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-nav-back{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--muted);font-size:14px;font-family:'IBM Plex Mono',monospace;transition:color .15s;}
+.topbar-nav-back:hover{color:var(--teal);}
+.topbar-nav-right{display:flex;align-items:center;gap:12px;}
+.topbar-nav-label{font-size:13px;font-family:'IBM Plex Mono',monospace;color:var(--dim);}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar-nav">
+  <a class="topbar-nav-back" href="../index.html">← techroadmap.ai</a>
+  <div class="topbar-nav-right">
+    <span class="topbar-nav-label">The Academy</span>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"><i class="ph ph-sun"></i></button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      <span class="hero-badge-text">TechRoadmap · Academy · Active</span>
+    </div>
+    <h1>Your path to<br><span>architectural authority</span></h1>
+    <p class="hero-sub">One school. Six learning pillars. Built by a practitioner for practitioners — an AI platform architect and fintech infrastructure builder who writes from the ledger, not the whitepaper.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">6</div><div class="hero-stat-label">Learning pillars</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">45</div><div class="hero-stat-label">Topics covered</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">5</div><div class="hero-stat-label">Publishing platforms</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">1</div><div class="hero-stat-label">Framework library</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="tr-badge">
+      <div class="tr-badge-main">TECH<br>ROAD<br>MAP</div>
+      <div class="tr-badge-sub">THE SCHOOL</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- START HERE -->
+  <div class="section-header">
+    <div class="section-label" style="background:var(--teal-dim);color:var(--teal);">★ Start Here</div>
+    <div class="section-line"></div>
+  </div>
+
+  <a class="primary-card" href="financial-inclusion-infrastructure-problem.html">
+    <div class="pc-icon"><i class="ph ph-train"></i></div>
+    <div class="pc-body">
+      <div class="pc-eyebrow">Foundational Essay · P1 &amp; P3</div>
+      <div class="pc-title">Financial Inclusion Is an Infrastructure Problem, Not an App Problem</div>
+      <div class="pc-desc">The anchor essay. Start here to understand the school's thesis: financial inclusion is an infrastructure problem, not an app problem. Read this first — everything else builds on it.</div>
+    </div>
+    <div class="pc-cta">Read the Essay →</div>
+  </a>
+
+  <a class="primary-card secondary" href="https://techroadmap.substack.com" target="_blank">
+    <div class="pc-icon violet"><i class="ph ph-envelope"></i></div>
+    <div class="pc-body">
+      <div class="pc-eyebrow violet">Newsletter · Free · Substack</div>
+      <div class="pc-title">Subscribe to TechRoadmap</div>
+      <div class="pc-desc">Deep dives, learning series, build-in-public narratives, and takes on AI architecture and fintech infrastructure — twice a month. Written for architects, builders, and founders who want more than opinion.</div>
+    </div>
+    <div class="pc-cta violet">Subscribe Free →</div>
+  </a>
+
+  <!-- LEARNING PILLARS -->
+  <div class="section-header">
+    <div class="section-label" style="background:var(--violet-dim);color:var(--violet);">Learning Pillars</div>
+    <div class="section-line"></div>
+    <span style="font-size:13px;color:var(--dim);white-space:nowrap;">Six domains of authority · Click any pillar to explore</span>
+  </div>
+
+  <div class="pillar-grid">
+
+    <a class="pillar-card" href="pillar-01-building-the-rails.html" style="border-color:var(--teal);">
+      <div class="pc2-icon"><i class="ph ph-path"></i></div>
+      <div>
+        <div class="pc2-num">Pillar 01</div>
+        <div class="pc2-title">Building the Rails</div>
+        <div class="pc2-desc">Payment infrastructure at scale — ledger design, PayFac models, multi-currency wallets, mobile money, payout routing, remittance corridors</div>
+        <div class="pc2-tag" style="background:var(--teal-dim);color:var(--teal);">10 topics · Core authority</div>
+      </div>
+    </a>
+
+    <a class="pillar-card" href="pillar-02-ai-native-platforms.html" style="border-color:var(--violet);">
+      <div class="pc2-icon"><i class="ph ph-brain"></i></div>
+      <div>
+        <div class="pc2-num">Pillar 02</div>
+        <div class="pc2-title">AI-Native Platforms</div>
+        <div class="pc2-desc">Architecture, not features — event-driven AI design, domain events, AI in compliance, multi-tenant AI isolation, the difference between a feature and infrastructure</div>
+        <div class="pc2-tag" style="background:var(--violet-dim);color:var(--violet);">8 topics · Frontier</div>
+      </div>
+    </a>
+
+    <a class="pillar-card" href="pillar-03-financial-inclusion.html" style="border-color:var(--coral);">
+      <div class="pc2-icon"><i class="ph ph-globe-hemisphere-west"></i></div>
+      <div>
+        <div class="pc2-num">Pillar 03</div>
+        <div class="pc2-title">Financial Inclusion by Design</div>
+        <div class="pc2-desc">Infrastructure as inclusion strategy — thin-file credit, group savings primitives, remittance design, why inclusion initiatives fail to scale</div>
+        <div class="pc2-tag" style="background:var(--coral-dim);color:var(--coral);">6 topics · Impact</div>
+      </div>
+    </a>
+
+    <a class="pillar-card" href="pillar-04-platform-thinking.html" style="border-color:var(--green);">
+      <div class="pc2-icon"><i class="ph ph-wrench"></i></div>
+      <div>
+        <div class="pc2-num">Pillar 04</div>
+        <div class="pc2-title">Platform Thinking</div>
+        <div class="pc2-desc">From builder to infrastructure provider — multi-tenancy, white-label architecture, monorepo design, domain events, the platform-of-platforms model</div>
+        <div class="pc2-tag" style="background:var(--green-dim);color:var(--green);">8 topics · Architecture</div>
+      </div>
+    </a>
+
+    <a class="pillar-card" href="pillar-05-builders-journey.html" style="border-color:var(--amber);">
+      <div class="pc2-icon"><i class="ph ph-hammer"></i></div>
+      <div>
+        <div class="pc2-num">Pillar 05</div>
+        <div class="pc2-title">The Builder's Journey</div>
+        <div class="pc2-desc">Engineering meets entrepreneurship — the isolation of the solo architect, shipping as discipline, the gap between a beautiful system and a working business</div>
+        <div class="pc2-tag" style="background:var(--amber-dim);color:var(--amber);">5 topics · Human</div>
+      </div>
+    </a>
+
+    <a class="pillar-card" href="pillar-06-entrepreneurship-gap.html" style="border-color:var(--blue);">
+      <div class="pc2-icon"><i class="ph ph-compass"></i></div>
+      <div>
+        <div class="pc2-num">Pillar 06</div>
+        <div class="pc2-title">The Entrepreneurship Gap</div>
+        <div class="pc2-desc">The distance between talking and jumping — imposter syndrome in tech, the corporate safety trap, execution paralysis as a debugging problem</div>
+        <div class="pc2-tag" style="background:var(--blue-dim);color:var(--blue);">8 topics · Mindset</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- FRAMEWORKS -->
+  <div class="section-header">
+    <div class="section-label" style="background:var(--amber-dim);color:var(--amber);">Framework Library</div>
+    <div class="section-line"></div>
+    <span style="font-size:13px;color:var(--dim);white-space:nowrap;">Named mental models · Grows with every series</span>
+  </div>
+
+  <div class="fw-grid">
+    <a class="fw-card" href="frameworks.html">
+      <div class="fw-num" style="background:var(--teal-dim);color:var(--teal);">F-01</div>
+      <div class="fw-body">
+        <div class="fw-id">FRAMEWORK-01 · Pillar 01</div>
+        <div class="fw-name">The Rails-First Framework</div>
+        <div class="fw-type">INFRASTRUCTURE · Build rails before product</div>
+      </div>
+    </a>
+    <div class="fw-placeholder">F-02 · Coming with "Building the Rails" series</div>
+    <div class="fw-placeholder">F-03 · Coming with "AI-Native Platforms" series</div>
+  </div>
+
+  <!-- ACTIVE SERIES -->
+  <div class="section-header">
+    <div class="section-label" style="background:var(--surface2);color:var(--muted);">Active Learning Series</div>
+    <div class="section-line"></div>
+    <span style="font-size:13px;color:var(--dim);white-space:nowrap;">Serialized content that builds across issues</span>
+  </div>
+
+  <div class="series-grid">
+
+    <div class="series-card" style="border-color:var(--teal);">
+      <div class="series-card" style="border:none;padding:0;">
+        <div class="series-pillar" style="color:var(--teal);">Pillar 01 · Building the Rails</div>
+        <div class="series-title">Building the Rails: Payment Infrastructure at Scale</div>
+        <div class="series-meta">6-part series · Substack · Launching May 2026</div>
+        <div class="series-progress">
+          <div class="series-dots">
+            <div class="series-dot pending" style="background:var(--teal);"></div>
+            <div class="series-dot pending" style="background:var(--teal);"></div>
+            <div class="series-dot pending" style="background:var(--teal);"></div>
+            <div class="series-dot pending" style="background:var(--teal);"></div>
+            <div class="series-dot pending" style="background:var(--teal);"></div>
+            <div class="series-dot pending" style="background:var(--teal);"></div>
+          </div>
+          <span class="series-status">0 / 6 published</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="series-card" style="border-color:var(--blue);">
+      <div class="series-card" style="border:none;padding:0;">
+        <div class="series-pillar" style="color:var(--blue);">Pillar 06 · Entrepreneurship Gap</div>
+        <div class="series-title">The Gap Series: From Corporate to Building</div>
+        <div class="series-meta">3-part series · LinkedIn · Launching July 2026</div>
+        <div class="series-progress">
+          <div class="series-dots">
+            <div class="series-dot pending" style="background:var(--blue);"></div>
+            <div class="series-dot pending" style="background:var(--blue);"></div>
+            <div class="series-dot pending" style="background:var(--blue);"></div>
+          </div>
+          <span class="series-status">0 / 3 published</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="series-card" style="border-color:var(--violet);">
+      <div class="series-card" style="border:none;padding:0;">
+        <div class="series-pillar" style="color:var(--violet);">Pillar 02 · AI-Native Platforms</div>
+        <div class="series-title">AI-Native by Design: Architecture Patterns</div>
+        <div class="series-meta">4-part series · Substack · Q3 2026</div>
+        <div class="series-progress">
+          <div class="series-dots">
+            <div class="series-dot pending" style="background:var(--violet);"></div>
+            <div class="series-dot pending" style="background:var(--violet);"></div>
+            <div class="series-dot pending" style="background:var(--violet);"></div>
+            <div class="series-dot pending" style="background:var(--violet);"></div>
+          </div>
+          <span class="series-status">0 / 4 published</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- WORKFLOW -->
+  <div class="section-header">
+    <div class="section-label" style="background:var(--surface2);color:var(--muted);">How to Use This School</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="workflow">
+    <div class="wf-step">
+      <div class="wf-icon"><i class="ph ph-book-open"></i></div>
+      <div class="wf-title">Read</div>
+      <div class="wf-desc">Start with the Foundational Essay above. Then pick a pillar that matches where you are building right now. Read the anchor pieces for that pillar.</div>
+    </div>
+    <div class="wf-step">
+      <div class="wf-icon"><i class="ph ph-magnifying-glass"></i></div>
+      <div class="wf-title">Go Deep</div>
+      <div class="wf-desc">Open a pillar page to see all topics in that domain. Follow the serialized series in order — each part builds on the previous.</div>
+    </div>
+    <div class="wf-step">
+      <div class="wf-icon"><i class="ph ph-map-trifold"></i></div>
+      <div class="wf-title">Apply the Framework</div>
+      <div class="wf-desc">Open the Framework Library. Each named framework is a reusable mental model extracted from the writing. Apply it to your own architecture decisions.</div>
+    </div>
+    <div class="wf-step">
+      <div class="wf-icon"><i class="ph ph-chat-circle"></i></div>
+      <div class="wf-title">Share the Take</div>
+      <div class="wf-desc">Join the conversation on LinkedIn or Substack. The school is a two-way thing — the best readers sharpen the ideas that come back as new essays.</div>
+    </div>
+    <div class="wf-step">
+      <div class="wf-icon"><i class="ph ph-hammer"></i></div>
+      <div class="wf-title">Build in Public</div>
+      <div class="wf-desc">The school documents what has been built — the multi-tenant payment infrastructure, built in public. Build on top of these ideas. Share what you make.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>TechRoadmap · The School</span>
+  <span>6 pillars · 45 topics · 1 framework library</span>
+  <span>techroadmap.ai</span>
+</div>
+
+</body>
+<script>
+(function(){
+  var h=document.documentElement,b=document.getElementById('theme-toggle');
+  function apply(t){h.dataset.theme=t;var i=b.querySelector('i');i.className=t==='dark'?'ph ph-sun':'ph ph-moon';}
+  apply(h.dataset.theme||'dark');
+  b.addEventListener('click',function(){var n=h.dataset.theme==='dark'?'light':'dark';localStorage.setItem('theme',n);apply(n);});
+})();
+</script>
+</html>

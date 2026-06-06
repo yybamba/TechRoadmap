@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');</script>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Why Payment Rail Selection Is an Architectural Decision, Not a Vendor Decision · TechRoadmap</title>
+<meta name="description" content="The comparison spreadsheet gives you fees and uptime SLAs. It says nothing about the blast radius of a switch two years into production. Payment rail selection is an architectural commitment.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+:root{
+  --bg:#0e1117;--surface:#151b25;--surface2:#1c2535;--border:#263044;--border2:#344563;
+  --text:#e2e8f0;--muted:#7a8fa8;--dim:#3f5070;
+  --accent:#3ec9b0;--accent-dim:#1a4a44;--accent-mid:#22a090;
+  --teal:#3ec9b0;--teal-dim:#1a4a44;--teal-mid:#22a090;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.75;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 60px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-back{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;font-family:var(--mono);transition:color .15s;}
+.topbar-back:hover{color:var(--accent);}
+.topbar-meta{display:flex;align-items:center;gap:16px;}
+.topbar-pill{font-size:11px;font-family:var(--mono);font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;background:var(--accent-dim);color:var(--accent);}
+
+/* ARTICLE HEADER */
+.article-header{border-bottom:1px solid var(--border);padding:52px 60px 44px;background:linear-gradient(160deg,rgba(62,201,176,.04) 0%,transparent 60%);}
+.article-eyebrow{display:inline-flex;align-items:center;gap:10px;background:var(--accent-dim);border:1px solid var(--accent-mid);padding:4px 14px;border-radius:20px;margin-bottom:20px;}
+.article-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+.article-eyebrow-text{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-family:var(--mono);}
+.article-title{font-size:40px;font-weight:700;color:var(--text);line-height:1.15;letter-spacing:-.02em;max-width:720px;margin-bottom:16px;}
+.article-subtitle{font-size:19px;color:var(--muted);line-height:1.7;max-width:640px;margin-bottom:28px;}
+.article-meta{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.meta-author{display:flex;align-items:center;gap:10px;}
+.meta-avatar{width:36px;height:36px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent-mid);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.meta-name{font-size:14px;font-weight:600;color:var(--text);}
+.meta-role{font-size:12px;color:var(--muted);font-family:var(--mono);}
+.meta-divider{width:1px;height:32px;background:var(--border);}
+.meta-item{font-size:13px;color:var(--muted);font-family:var(--mono);}
+.meta-item span{color:var(--dim);}
+
+/* HERO IMAGE */
+.article-hero{width:100%;max-height:420px;object-fit:cover;display:block;}
+.article-hero-credit{text-align:right;font-size:11px;color:var(--dim);font-family:var(--mono);padding:6px 60px 0;}
+.article-hero-credit a{color:var(--dim);text-decoration:underline;}
+
+/* ARTICLE BODY */
+.article-wrap{display:grid;grid-template-columns:1fr min(720px,100%) 1fr;padding:48px 60px 96px;}
+.article-body{grid-column:2;font-size:17px;line-height:1.85;color:#cdd8e8;}
+.article-body p{margin-bottom:24px;}
+.article-body h2{font-size:26px;font-weight:700;color:var(--text);margin:48px 0 16px;letter-spacing:-.01em;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.article-body strong{color:var(--text);font-weight:600;}
+.article-body em{color:var(--accent);font-style:normal;font-weight:500;}
+
+/* CALLOUT */
+.callout{background:var(--surface);border:1px solid var(--accent-mid);border-left:3px solid var(--accent);border-radius:8px;padding:20px 24px;margin:32px 0;}
+.callout-label{font-size:11px;font-family:var(--mono);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.callout p{margin:0 0 8px;font-size:15px;color:var(--muted);line-height:1.75;}
+.callout p:last-child{margin-bottom:0;}
+
+/* AUTHOR BIO */
+.author-bio{grid-column:2;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;display:flex;align-items:flex-start;gap:18px;margin-top:8px;}
+.bio-avatar{width:48px;height:48px;border-radius:50%;flex-shrink:0;background:var(--accent-dim);border:2px solid var(--accent-mid);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.bio-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.bio-role{font-size:12px;color:var(--accent);font-family:var(--mono);margin-bottom:10px;}
+.bio-text{font-size:14px;color:var(--muted);line-height:1.7;}
+.bio-links{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap;}
+.bio-link{font-size:13px;font-family:var(--mono);color:var(--accent);border:1px solid var(--accent-mid);border-radius:4px;padding:4px 12px;transition:all .15s;}
+.bio-link:hover{background:var(--accent-dim);}
+
+/* NEXT READS */
+.next-reads{border-top:1px solid var(--border);padding:40px 60px 64px;}
+.next-label{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-family:var(--mono);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;}
+.next-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px;transition:all .15s;}
+.next-card:hover{background:var(--surface2);border-color:var(--border2);}
+.next-pillar{font-size:11px;font-family:var(--mono);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:6px;}
+.next-title{font-size:15px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:4px;}
+.next-dest{font-size:12px;color:var(--muted);font-family:var(--mono);}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--border);padding:20px 60px;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--dim);font-family:var(--mono);}
+
+@media(max-width:900px){
+  .topbar,.article-header,.next-reads,.footer{padding-left:20px;padding-right:20px;}
+  .article-wrap{grid-template-columns:1fr;padding:32px 20px 64px;}
+  .article-wrap .article-body,.article-wrap .author-bio{grid-column:1;}
+  .article-title{font-size:28px;}
+  .article-subtitle{font-size:17px;}
+  .article-hero-credit{padding-left:20px;padding-right:20px;}
+}
+
+/* LIGHT THEME */
+html[data-theme="light"]{
+  --bg:#f9fafb;--surface:#ffffff;--surface2:#f3f4f6;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --text:#111827;--muted:#6b7280;--dim:#9ca3af;
+  --teal:#0d9488;--teal-dim:#f0fdfa;--teal-mid:#0f766e;
+  --accent:#0d9488;--accent-dim:#f0fdfa;--accent-mid:#0f766e;
+}
+html[data-theme="light"] body{background:var(--bg);}
+html[data-theme="light"] .article-body{color:#374151;}
+
+/* THEME TOGGLE */
+.theme-toggle{background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;border-radius:5px;padding:5px 8px;display:flex;align-items:center;font-size:17px;line-height:1;transition:all .15s;}
+.theme-toggle:hover{border-color:var(--accent-mid);color:var(--accent);}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="topbar-back" href="pillar-01-building-the-rails.html">← Pillar 01 · Building the Rails</a>
+  <div class="topbar-meta">
+    <span class="topbar-pill">P-01.01</span>
+    <span style="font-size:13px;color:var(--dim);font-family:var(--mono);">techroadmap.ai</span>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"><i class="ph ph-sun"></i></button>
+  </div>
+</div>
+
+<!-- ARTICLE HEADER -->
+<div class="article-header">
+  <div class="article-eyebrow">
+    <div class="article-eyebrow-dot"></div>
+    <span class="article-eyebrow-text">Pillar 01 · Building the Rails · Short Take</span>
+  </div>
+  <h1 class="article-title">Why Payment Rail Selection Is an Architectural Decision, Not a Vendor Decision</h1>
+  <p class="article-subtitle">The comparison spreadsheet gives you fees and uptime SLAs. It says nothing about the blast radius of a switch two years into production.</p>
+  <div class="article-meta">
+    <div class="meta-author">
+      <div class="meta-avatar"><i class="ph ph-train"></i></div>
+      <div>
+        <div class="meta-name">Yaya Bamba</div>
+        <div class="meta-role">Founder · Teddoh</div>
+      </div>
+    </div>
+    <div class="meta-divider"></div>
+    <div class="meta-item"><span>Published</span> June 5, 2026</div>
+    <div class="meta-item"><span>Pillar</span> 01 – Building the Rails</div>
+    <div class="meta-item"><span>Reading time</span> ~3 min</div>
+  </div>
+</div>
+
+<!-- HERO IMAGE -->
+<img
+  class="article-hero"
+  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1400&q=80&fit=crop&auto=format"
+  alt="Data and analytics infrastructure representing payment rail architecture"
+/>
+<p class="article-hero-credit">
+  Photo by <a href="https://unsplash.com/@lukash?utm_source=techroadmap&utm_medium=referral" target="_blank">Lukas</a>
+  on <a href="https://unsplash.com/?utm_source=techroadmap&utm_medium=referral" target="_blank">Unsplash</a>
+</p>
+
+<!-- ARTICLE BODY -->
+<div class="article-wrap">
+<article class="article-body">
+
+<p>The second time we rebuilt our payment routing, I finally understood what went wrong the first time.</p>
+
+<p>We thought we were picking a vendor. We were actually making an architectural commitment – we just didn't know it.</p>
+
+<p>The comparison spreadsheet showed transaction fees and uptime SLAs. It said nothing about who'd be holding our settlement float, what currency risk we were inheriting, or what it would actually cost to switch rails two years into production, once our entire ledger design had quietly grown around that first decision.</p>
+
+<p>When we had to rebuild, the team called it tech debt. I disagreed. Tech debt is what happens when things get sloppy. This was a strategic architectural choice that got made by the procurement function, in a vendor meeting, with a spreadsheet.</p>
+
+<p>Wrong people. Wrong moment. Wrong framing.</p>
+
+<h2>What Rail Selection Actually Determines</h2>
+
+<p>Choosing a payment rail is not a vendor comparison. It is a series of architectural commitments made simultaneously – most of them invisible at the time.</p>
+
+<p><strong>Settlement architecture.</strong> Who holds the float? For how long? Under what conditions does it move? Your ledger design is built around the answers to these questions whether you realize it or not. Change the rail and you change the answers – which means you change the ledger.</p>
+
+<p><strong>Currency and FX exposure.</strong> Every rail has a position on currency. Settling in USD through one rail is not the same as settling in USD through another. The FX conversion points, the timing, the counterparty risk – all of it is inherited when you choose a rail and largely invisible until you've been running long enough to see it compound.</p>
+
+<p><strong>Reconciliation design.</strong> At low volume, reconciliation is manageable regardless of how the rail works. At scale, the structure of your reconciliation logic is tightly coupled to how the rail structures its data. Switching rails at volume means rebuilding reconciliation – a project that is rarely scoped into the original cost estimate of the switch.</p>
+
+<p><strong>Failure surface.</strong> When the rail goes down – and it will – what is the blast radius? For a platform with multiple rails and smart routing, it is a degraded experience. For a platform with a single rail and no routing logic, it is a platform outage. That blast radius was chosen on the day you chose the rail. Most teams don't realize they made that choice.</p>
+
+<div class="callout">
+  <div class="callout-label">The Question Worth Asking Before You Choose</div>
+  <p>If this rail goes down for 24 hours in 18 months, when we are processing 10× today's volume, what breaks and who does it affect?</p>
+  <p>If you can answer that question clearly and the answer is acceptable, you have made an informed architectural decision. If you cannot answer it, you are making a vendor decision and calling it a product decision.</p>
+</div>
+
+<h2>Why Teams Get This Wrong</h2>
+
+<p>The procurement frame dominates early-stage decisions because the costs of the architectural frame are deferred. The pricing table is in front of you now. The reconciliation rebuild is eighteen months away. The settlement float problem shows up at a level of volume you have not yet reached. The blast radius question feels hypothetical.</p>
+
+<p>It is not hypothetical. It is scheduled. The question is only whether you will be the one who decided what it looks like, or the one who discovers it.</p>
+
+<p>We rebuilt payment routing twice. Both times the failure mode wasn't the vendor. It was us treating a strategic architectural choice like a commodity procurement decision.</p>
+
+<p>If you're evaluating payment rails right now – are you making a vendor decision, or an architectural commitment you won't fully understand for another two years?</p>
+
+<p>Both are true. Only one is on the agenda.</p>
+
+</article>
+
+<!-- AUTHOR BIO -->
+<div class="author-bio">
+  <div class="bio-avatar"><i class="ph ph-train"></i></div>
+  <div>
+    <div class="bio-name">Yaya Bamba</div>
+    <div class="bio-role">Founder · Teddoh · Payment Infrastructure Architect</div>
+    <div class="bio-text">Building fintech infrastructure that works the same way in Canada, the US, the EU, and across Africa. I write about the architecture of financial systems – the decisions, the trade-offs, and the honest realities of building at the infrastructure layer.</div>
+    <div class="bio-links">
+      <a class="bio-link" href="https://techroadmap.substack.com" target="_blank">Subscribe on Substack</a>
+      <a class="bio-link" href="https://www.linkedin.com/in/yaya-bamba-ai/" target="_blank">LinkedIn</a>
+      <a class="bio-link" href="../index.html">techroadmap.ai</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- NEXT READS -->
+<div class="next-reads">
+  <div class="next-label">Continue in Pillar 01</div>
+  <div class="next-grid">
+    <a class="next-card" href="financial-inclusion-infrastructure-problem.html">
+      <div class="next-pillar">F-01 · Foundational Essay</div>
+      <div class="next-title">Financial Inclusion Is an Infrastructure Problem, Not an App Problem</div>
+      <div class="next-dest">Foundational Essay · techroadmap.ai</div>
+    </a>
+    <a class="next-card" href="pillar-01-building-the-rails.html">
+      <div class="next-pillar">P-01 · Building the Rails · Academy</div>
+      <div class="next-title">Pillar 01 — Building the Rails</div>
+      <div class="next-dest">Deep dive series · techroadmap.ai</div>
+    </a>
+    <a class="next-card" href="ai-feature-vs-ai-native-platform.html">
+      <div class="next-pillar">T-02.01 · AI-Native Platforms · Essay</div>
+      <div class="next-title">The Difference Between an AI Feature and an AI-Native Platform</div>
+      <div class="next-dest">Essay · techroadmap.ai</div>
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>TechRoadmap · Pillar 01 · Building the Rails</span>
+  <span>P-01.01 · Published June 5, 2026</span>
+  <span>techroadmap.ai</span>
+</div>
+
+</body>
+<script>
+(function(){
+  var h=document.documentElement,b=document.getElementById('theme-toggle');
+  function apply(t){h.dataset.theme=t;var i=b.querySelector('i');i.className=t==='dark'?'ph ph-sun':'ph ph-moon';}
+  apply(h.dataset.theme||'dark');
+  b.addEventListener('click',function(){var n=h.dataset.theme==='dark'?'light':'dark';localStorage.setItem('theme',n);apply(n);});
+})();
+</script>
+</html>

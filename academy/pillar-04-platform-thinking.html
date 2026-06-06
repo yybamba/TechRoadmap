@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');</script>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pillar 04 — Platform Thinking · TechRoadmap</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+:root{
+  --bg:#0e1117;--surface:#151b25;--surface2:#1c2535;--border:#263044;--border2:#344563;
+  --text:#e2e8f0;--muted:#7a8fa8;--dim:#3f5070;
+  --accent:#50d080;--accent-dim:#0f3020;--accent-mid:#30a060;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.75;min-height:100vh;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 60px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-back{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--muted);font-size:14px;font-family:var(--mono);transition:color .15s;}
+.topbar-back:hover{color:var(--accent);}
+.topbar-label{font-size:13px;font-family:var(--mono);color:var(--dim);}
+.hero{background:linear-gradient(180deg,rgba(80,208,128,.05) 0%,transparent 100%);border-bottom:1px solid var(--border);padding:40px 60px 36px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent-dim);border:1px solid var(--accent-mid);padding:5px 14px;border-radius:20px;margin-bottom:16px;}
+.hero-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-badge-text{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-family:var(--mono);}
+.hero h1{font-size:36px;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:10px;}
+.hero h1 span{color:var(--accent);}
+.hero-sub{font-size:17px;color:var(--muted);line-height:1.8;max-width:680px;margin-bottom:20px;}
+.hero-stats{display:flex;gap:24px;flex-wrap:wrap;}
+.hero-stat{text-align:center;}
+.hero-stat-num{font-size:26px;font-weight:700;font-family:var(--mono);color:var(--accent);}
+.hero-stat-label{font-size:13px;color:var(--muted);margin-top:2px;}
+.main{padding:36px 60px 80px;max-width:1400px;}
+.section-header{display:flex;align-items:center;gap:12px;margin:32px 0 14px;}
+.section-line{flex:1;height:1px;background:var(--border);}
+.section-label{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 14px;border-radius:3px;}
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:9px;}
+.topic-card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:14px 16px;transition:all .15s;display:flex;align-items:flex-start;gap:12px;border-left:3px solid var(--accent);}
+.topic-card:hover{background:var(--surface2);border-color:var(--border2);}
+.topic-num{font-size:12px;font-family:var(--mono);color:var(--accent);font-weight:700;margin-bottom:3px;}
+.topic-title{font-size:15px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:4px;}
+.topic-platform{font-size:12px;font-family:var(--mono);padding:2px 7px;border-radius:2px;background:var(--accent-dim);color:var(--accent);display:inline-block;}
+.published-empty{background:var(--surface);border:1px dashed var(--border);border-radius:8px;padding:32px;text-align:center;color:var(--dim);font-size:14px;font-family:var(--mono);}
+.footer{border-top:1px solid var(--border);padding:20px 60px;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--dim);font-family:var(--mono);}
+
+/* LIGHT THEME */
+html[data-theme="light"]{
+  --bg:#f9fafb;--surface:#ffffff;--surface2:#f3f4f6;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --text:#111827;--muted:#6b7280;--dim:#9ca3af;
+  --teal:#0d9488;--teal-dim:#f0fdfa;--teal-mid:#0f766e;
+  --violet:#7c3aed;--violet-dim:#f5f3ff;--violet-mid:#6d28d9;
+  --amber:#d97706;--amber-dim:#fffbeb;
+  --blue:#2563eb;--blue-dim:#eff6ff;
+  --accent:#0d9488;
+}
+html[data-theme="light"] body{background:var(--bg);}
+/* THEME TOGGLE */
+.theme-toggle{background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;border-radius:5px;padding:5px 8px;display:flex;align-items:center;font-size:17px;line-height:1;transition:all .15s;}
+.theme-toggle:hover{border-color:var(--teal-mid);color:var(--teal);}
+
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="topbar-back" href="index.html">← Back to Academy</a>
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"><i class="ph ph-sun"></i></button>
+  <span class="topbar-label">Pillar 04 · Platform Thinking</span>
+</div>
+<div class="hero">
+  <div class="hero-badge"><div class="hero-badge-dot"></div><span class="hero-badge-text">Pillar 04 · Architecture</span></div>
+  <h1>Platform <span>Thinking</span></h1>
+  <p class="hero-sub">The shift from building apps to building infrastructure others build on. Multi-tenancy, white-label architecture, domain events, monorepo design, and the mental models required to design for extensibility over specificity — documented from building Teddohsphere.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-num">8</div><div class="hero-stat-label">Topics</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">0</div><div class="hero-stat-label">Published pieces</div></div>
+  </div>
+</div>
+<div class="main">
+  <div class="section-header">
+    <div class="section-label" style="background:var(--accent-dim);color:var(--accent);">Topic Map</div>
+    <div class="section-line"></div>
+    <span style="font-size:11px;color:var(--dim);">8 topics · LinkedIn + teddoh.io primary</span>
+  </div>
+  <div class="topic-grid">
+    <div class="topic-card"><div><div class="topic-num">T-04.01</div><div class="topic-title">The moment I stopped building apps and started building infrastructure — what triggered the shift</div><span class="topic-platform">LinkedIn</span></div></div>
+    <div class="topic-card"><div><div class="topic-num">T-04.02</div><div class="topic-title">Multi-tenancy is not a feature — it's an architectural commitment. Here's what that cost me.</div><span class="topic-platform">LinkedIn</span></div></div>
+    <div class="topic-card"><div><div class="topic-num">T-04.03</div><div class="topic-title">How I designed a Fintech-in-a-Box that lets a founder launch their own branded financial ecosystem in weeks</div><span class="topic-platform">Substack</span></div></div>
+    <div class="topic-card"><div><div class="topic-num">T-04.04</div><div class="topic-title">Monorepo architecture for a platform business: the Turborepo decisions I'd make again and the ones I wouldn't</div><span class="topic-platform">teddoh.io</span></div></div>
+    <div class="topic-card"><div><div class="topic-num">T-04.05</div><div class="topic-title">White-label vs. custom: the decision framework no one articulates clearly enough to be useful</div><span class="topic-platform">LinkedIn</span></div></div>
+    <div class="topic-card"><div><div class="topic-num">T-04.06</div><div class="topic-title">The domain event system is the most valuable thing I built and the last thing I'd explain to a non-engineer</div><span class="topic-platform">Substack</span></div></div>
+    <div class="topic-card"><div><div class="topic-num">T-04.07</div><div class="topic-title">How to design a developer-facing API when you're the only developer who'll ever use it</div><span class="topic-platform">teddoh.io</span></div></div>
+    <div class="topic-card"><div><div class="topic-num">T-04.08</div><div class="topic-title">Supabase to microservices: the migration you don't run until the metrics demand it</div><span class="topic-platform">teddoh.io</span></div></div>
+  </div>
+  <div class="section-header">
+    <div class="section-label" style="background:var(--surface2);color:var(--muted);">Published Pieces</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="published-empty">No published pieces yet · LinkedIn series starts May 2026</div>
+</div>
+<div class="footer">
+  <span>TechRoadmap · Pillar 04 · Platform Thinking</span>
+  <span>techroadmap.ai</span>
+</div>
+</body>
+<script>
+(function(){
+  var h=document.documentElement,b=document.getElementById('theme-toggle');
+  function apply(t){h.dataset.theme=t;var i=b.querySelector('i');i.className=t==='dark'?'ph ph-sun':'ph ph-moon';}
+  apply(h.dataset.theme||'dark');
+  b.addEventListener('click',function(){var n=h.dataset.theme==='dark'?'light':'dark';localStorage.setItem('theme',n);apply(n);});
+})();
+</script>
+</html>

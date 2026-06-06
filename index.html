@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');</script>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yaya Bamba — AI Platform Architect · Fintech Infrastructure Builder</title>
+<meta name="description" content="I build fintech infrastructure. I write about the systems, trade-offs, and architectural decisions behind platforms that actually work at scale — from payment rails to AI-native design.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+:root{
+  --bg:#0e1117;--surface:#151b25;--surface2:#1c2535;--border:#263044;--border2:#344563;
+  --text:#e2e8f0;--muted:#7a8fa8;--dim:#3f5070;
+  --teal:#3ec9b0;--teal-dim:#1a4a44;--teal-mid:#22a090;
+  --violet:#9d7ff0;--violet-dim:#2a1f50;--violet-mid:#7a5fc4;
+  --amber:#f0a030;--amber-dim:#3d2d0a;
+  --blue:#5aadff;--blue-dim:#0f2847;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.75;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(14,17,23,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 60px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:56px;
+}
+.nav-brand{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--teal);letter-spacing:.04em;}
+.nav-links{display:flex;align-items:center;gap:28px;}
+.nav-link{font-size:14px;color:var(--muted);transition:color .15s;}
+.nav-link:hover{color:var(--text);}
+.nav-cta{
+  background:var(--teal-dim);border:1px solid var(--teal-mid);
+  color:var(--teal);padding:7px 18px;border-radius:5px;
+  font-size:13px;font-family:var(--mono);font-weight:600;
+  letter-spacing:.04em;transition:all .15s;
+}
+.nav-cta:hover{background:var(--teal-mid);color:#0e1117;}
+
+/* HERO */
+.hero{
+  padding:80px 60px 72px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(160deg,rgba(62,201,176,.05) 0%,transparent 55%),
+             linear-gradient(220deg,rgba(157,127,240,.04) 0%,transparent 50%);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:48px;
+}
+.hero-left{max-width:700px;}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--teal-dim);border:1px solid var(--teal-mid);
+  padding:5px 16px;border-radius:20px;margin-bottom:24px;
+}
+.hero-eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pulse 2.5s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.hero-eyebrow-text{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);font-family:var(--mono);}
+.hero-name{font-size:52px;font-weight:700;color:var(--text);line-height:1.1;margin-bottom:10px;letter-spacing:-.02em;}
+.hero-name span{color:var(--teal);}
+.hero-title{font-size:17px;color:var(--muted);font-family:var(--mono);margin-bottom:24px;letter-spacing:.02em;}
+.hero-thesis{
+  font-size:18px;color:var(--text);line-height:1.7;
+  max-width:640px;margin-bottom:36px;
+  border-left:3px solid var(--teal-mid);
+  padding-left:20px;
+}
+.hero-thesis em{color:var(--teal);font-style:normal;font-weight:600;}
+.hero-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--teal-mid);color:#0e1117;
+  padding:12px 24px;border-radius:7px;
+  font-size:14px;font-weight:700;font-family:var(--mono);
+  letter-spacing:.04em;transition:all .15s;
+}
+.btn-primary:hover{background:var(--teal);}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--surface);border:1px solid var(--border2);color:var(--text);
+  padding:12px 24px;border-radius:7px;
+  font-size:14px;font-weight:600;transition:all .15s;
+}
+.btn-secondary:hover{border-color:var(--teal-mid);color:var(--teal);}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  color:var(--muted);font-size:14px;
+  transition:color .15s;
+}
+.btn-ghost:hover{color:var(--teal);}
+.hero-right{flex-shrink:0;padding-top:8px;}
+.identity-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:24px;width:240px;
+  position:relative;overflow:hidden;
+}
+.identity-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--teal-mid),var(--teal));
+}
+.id-avatar{
+  width:60px;height:60px;border-radius:50%;
+  background:var(--teal-dim);border:2px solid var(--teal-mid);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin-bottom:14px;
+}
+.id-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.id-role{font-size:12px;color:var(--teal);font-family:var(--mono);margin-bottom:14px;}
+.id-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.id-stat{background:var(--surface2);border-radius:6px;padding:8px 10px;text-align:center;}
+.id-stat-num{font-size:18px;font-weight:700;color:var(--teal);font-family:var(--mono);}
+.id-stat-label{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.3;}
+
+/* SECTION WRAPPER */
+.section{padding:56px 60px;}
+.section-header{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+.section-line{flex:1;height:1px;background:var(--border);}
+.section-label{
+  font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:4px 14px;border-radius:3px;font-family:var(--mono);
+  white-space:nowrap;
+}
+
+/* PLATFORMS */
+.platforms{padding:0 60px 56px;}
+.platform-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.platform-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:20px 22px;
+  transition:all .15s;display:flex;flex-direction:column;gap:10px;
+}
+.platform-card:hover{background:var(--surface2);border-color:var(--border2);transform:translateY(-2px);}
+.platform-card.featured{border-color:var(--teal-mid);position:relative;overflow:hidden;}
+.platform-card.featured::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal-mid),var(--teal));}
+.plat-icon{font-size:22px;}
+.plat-eyebrow{font-size:11px;font-family:var(--mono);font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.plat-name{font-size:16px;font-weight:700;color:var(--text);}
+.plat-desc{font-size:14px;color:var(--muted);line-height:1.6;flex:1;}
+.plat-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;font-family:var(--mono);
+  transition:color .15s;margin-top:4px;
+  font-weight:600;
+}
+
+/* PILLARS */
+.pillar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.pillar-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:18px 20px;
+  display:flex;align-items:flex-start;gap:14px;
+  border-left:3px solid;transition:all .15s;
+  text-decoration:none;
+}
+.pillar-card:hover{background:var(--surface2);}
+.p-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.p-num{font-size:11px;font-family:var(--mono);color:var(--dim);margin-bottom:3px;}
+.p-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.p-desc{font-size:13px;color:var(--muted);line-height:1.55;}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 340px;gap:40px;align-items:start;}
+.about-body p{font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:16px;}
+.about-body p strong{color:var(--text);}
+.about-body p em{color:var(--teal);font-style:normal;}
+.build-list{display:flex;flex-direction:column;gap:8px;margin-top:20px;}
+.build-item{
+  display:flex;align-items:center;gap:10px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;padding:10px 14px;font-size:14px;color:var(--muted);
+}
+.build-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;}
+.about-right{display:flex;flex-direction:column;gap:10px;}
+.credential-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:14px 16px;
+}
+.cred-label{font-size:11px;font-family:var(--mono);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:6px;}
+.cred-val{font-size:15px;font-weight:700;color:var(--text);}
+.cred-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+
+/* ARTICLES */
+.article-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.article-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:22px 24px;
+  display:flex;flex-direction:column;gap:10px;
+  transition:all .15s;text-decoration:none;
+  border-top:3px solid;
+}
+.article-card:hover{background:var(--surface2);border-color:var(--border2);transform:translateY(-2px);}
+.art-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.art-platform{font-size:11px;font-family:var(--mono);font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.art-date{font-size:11px;color:var(--dim);font-family:var(--mono);}
+.art-pillar{font-size:11px;color:var(--dim);font-family:var(--mono);margin-bottom:2px;}
+.art-title{font-size:16px;font-weight:700;color:var(--text);line-height:1.4;}
+.art-excerpt{font-size:13px;color:var(--muted);line-height:1.6;flex:1;}
+.art-link{font-size:12px;font-family:var(--mono);font-weight:600;margin-top:4px;display:inline-flex;align-items:center;gap:4px;}
+
+/* ACADEMY CALLOUT */
+.academy-callout{
+  margin:0 60px 56px;
+  background:var(--surface);
+  border:1px solid var(--teal-mid);
+  border-radius:14px;padding:36px 40px;
+  display:flex;align-items:center;gap:40px;
+  position:relative;overflow:hidden;
+}
+.academy-callout::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--teal-mid),var(--teal));
+}
+.academy-left{flex:1;}
+.academy-eyebrow{font-size:11px;font-family:var(--mono);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;}
+.academy-title{font-size:26px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.academy-desc{font-size:15px;color:var(--muted);line-height:1.7;max-width:560px;}
+.academy-stats{display:flex;gap:24px;margin-top:20px;}
+.a-stat-num{font-size:24px;font-weight:700;color:var(--teal);font-family:var(--mono);}
+.a-stat-label{font-size:12px;color:var(--muted);margin-top:2px;}
+
+/* FOOTER */
+.footer{
+  border-top:1px solid var(--border);
+  padding:28px 60px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+}
+.footer-brand{font-family:var(--mono);font-size:13px;color:var(--teal);font-weight:600;}
+.footer-tagline{font-size:13px;color:var(--dim);margin-top:3px;}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap;}
+.footer-link{font-size:13px;color:var(--muted);transition:color .15s;}
+.footer-link:hover{color:var(--teal);}
+
+@media(max-width:900px){
+  .nav{padding:0 20px;}
+  .hero{flex-direction:column;padding:48px 20px;}
+  .hero-name{font-size:36px;}
+  .section{padding:40px 20px;}
+  .platforms{padding:0 20px 40px;}
+  .academy-callout{margin:0 20px 40px;flex-direction:column;gap:24px;padding:24px;}
+  .platform-grid,.pillar-grid,.article-grid{grid-template-columns:1fr;}
+  .about-grid{grid-template-columns:1fr;}
+  .footer{padding:24px 20px;}
+}
+
+/* LIGHT THEME */
+html[data-theme="light"]{
+  --bg:#f9fafb;--surface:#ffffff;--surface2:#f3f4f6;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --text:#111827;--muted:#6b7280;--dim:#9ca3af;
+  --teal:#0d9488;--teal-dim:#f0fdfa;--teal-mid:#0f766e;
+  --violet:#7c3aed;--violet-dim:#f5f3ff;--violet-mid:#6d28d9;
+  --amber:#d97706;--amber-dim:#fffbeb;
+  --blue:#2563eb;--blue-dim:#eff6ff;
+}
+html[data-theme="light"] body{background:var(--bg);}
+
+/* THEME TOGGLE */
+.theme-toggle{background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;border-radius:5px;padding:5px 8px;display:flex;align-items:center;font-size:17px;line-height:1;transition:all .15s;}
+.theme-toggle:hover{border-color:var(--teal-mid);color:var(--teal);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-brand">TECHROADMAP.AI</span>
+  <div class="nav-links">
+    <a class="nav-link" href="#articles">Articles</a>
+    <a class="nav-link" href="#about">About</a>
+    <a class="nav-link" href="#writing">Writing</a>
+    <a class="nav-link" href="#academy">Academy</a>
+    <a class="nav-cta" href="https://techroadmap.substack.com" target="_blank">Subscribe →</a>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"><i class="ph ph-sun"></i></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-dot"></div>
+      <span class="hero-eyebrow-text">AI Platform Architect · Fintech Infrastructure Builder</span>
+    </div>
+    <h1 class="hero-name">Yaya<br><span>Bamba</span></h1>
+    <div class="hero-title">Building fintech infrastructure · Writing about what it actually takes</div>
+    <blockquote class="hero-thesis">
+      I write about the architecture of financial infrastructure — the systems, the decisions, and the trade-offs that determine whether a fintech <em>actually works at scale</em> or just works in a demo. I've built it, so I write from the ledger, not the whitepaper.
+    </blockquote>
+    <div class="hero-actions">
+      <a class="btn-primary" href="https://techroadmap.substack.com" target="_blank">Read the Essays →</a>
+      <a class="btn-secondary" href="academy/index.html">Explore the Academy</a>
+      <a class="btn-ghost" href="https://www.linkedin.com/in/yaya-bamba-ai/" target="_blank">↗ LinkedIn</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="identity-card">
+      <div class="id-avatar"><i class="ph ph-hammer"></i></div>
+      <div class="id-name">Yaya Bamba</div>
+      <div class="id-role">@yayabamba</div>
+      <div class="id-stats">
+        <div class="id-stat">
+          <div class="id-stat-num">5</div>
+          <div class="id-stat-label">Markets</div>
+        </div>
+        <div class="id-stat">
+          <div class="id-stat-num">8+</div>
+          <div class="id-stat-label">Payment rails</div>
+        </div>
+        <div class="id-stat">
+          <div class="id-stat-num">6</div>
+          <div class="id-stat-label">Content pillars</div>
+        </div>
+        <div class="id-stat">
+          <div class="id-stat-num">1</div>
+          <div class="id-stat-label">Platform built</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORMS / WHERE TO FIND ME -->
+<section id="writing" class="section" style="padding-bottom:0;">
+  <div class="section-header">
+    <div class="section-label" style="background:var(--teal-dim);color:var(--teal);">Where I Write</div>
+    <div class="section-line"></div>
+    <span style="font-size:13px;color:var(--dim);white-space:nowrap;font-family:var(--mono);">Five platforms · One voice</span>
+  </div>
+</section>
+
+<div class="platforms">
+  <div class="platform-grid">
+
+    <a class="platform-card featured" href="https://techroadmap.substack.com" target="_blank">
+      <div class="plat-icon"><i class="ph ph-broadcast"></i></div>
+      <div class="plat-eyebrow" style="color:var(--teal);">Substack · Primary</div>
+      <div class="plat-name">TechRoadmap Newsletter</div>
+      <div class="plat-desc">Deep dives on fintech infrastructure, AI-native platform design, and the builder's journey. The long-form home. Everything substantive lives here first.</div>
+      <div class="plat-link" style="color:var(--teal);">techroadmap.substack.com →</div>
+    </a>
+
+    <a class="platform-card" href="https://www.linkedin.com/in/yaya-bamba-ai/" target="_blank">
+      <div class="plat-icon"><i class="ph ph-briefcase"></i></div>
+      <div class="plat-eyebrow" style="color:var(--blue);">LinkedIn · Distribution</div>
+      <div class="plat-name">Yaya Bamba on LinkedIn</div>
+      <div class="plat-desc">Shorter takes, observations from building in public, and the entrepreneurship gap. Where the practitioner voice meets a professional audience.</div>
+      <div class="plat-link" style="color:var(--blue);">Follow on LinkedIn →</div>
+    </a>
+
+    <a class="platform-card" href="academy/index.html">
+      <div class="plat-icon"><i class="ph ph-building-columns"></i></div>
+      <div class="plat-eyebrow" style="color:var(--violet);">Academy · Knowledge Hub</div>
+      <div class="plat-name">TechRoadmap Academy</div>
+      <div class="plat-desc">Six structured learning pillars, a reusable framework library, and active series for practitioners who want more than opinion. The school of thought.</div>
+      <div class="plat-link" style="color:var(--violet);">Explore the Academy →</div>
+    </a>
+
+    <a class="platform-card" href="https://teddoh.com" target="_blank">
+      <div class="plat-icon"><i class="ph ph-device-mobile"></i></div>
+      <div class="plat-eyebrow" style="color:var(--amber);">teddoh.com · Product</div>
+      <div class="plat-name">Teddoh Platform Blog</div>
+      <div class="plat-desc">The consumer-facing voice of Teddoh — wallets, BNPL, gig economy, savings, and marketplace. How the platform serves users globally.</div>
+      <div class="plat-link" style="color:var(--amber);">teddoh.com →</div>
+    </a>
+
+    <a class="platform-card" href="https://teddoh.io" target="_blank">
+      <div class="plat-icon"><i class="ph ph-gear"></i></div>
+      <div class="plat-eyebrow" style="color:var(--muted);">teddoh.io · Technical</div>
+      <div class="plat-name">Teddoh Engineering</div>
+      <div class="plat-desc">The technical and SaaS layer of Teddoh — architecture decisions, API design, white-label infrastructure, and the engineering behind the platform.</div>
+      <div class="plat-link" style="color:var(--muted);">teddoh.io →</div>
+    </a>
+
+    <div class="platform-card" style="cursor:default;opacity:.6;">
+      <div class="plat-icon"><i class="ph ph-robot"></i></div>
+      <div class="plat-eyebrow" style="color:var(--muted);">teddoh.ai · Coming</div>
+      <div class="plat-name">AI Layer</div>
+      <div class="plat-desc">The AI layer of Teddoh — embedded intelligence powering decisioning and automation across the platform.</div>
+      <div class="plat-link" style="color:var(--dim);">Coming soon</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LATEST ARTICLES -->
+<section id="articles" class="section" style="border-top:1px solid var(--border);">
+  <div class="section-header">
+    <div class="section-label" style="background:var(--teal-dim);color:var(--teal);">Latest Articles</div>
+    <div class="section-line"></div>
+    <a href="https://techroadmap.substack.com" target="_blank" style="font-size:13px;color:var(--teal);font-family:var(--mono);white-space:nowrap;">All on Substack →</a>
+  </div>
+  <div class="article-grid">
+
+    <a class="article-card" href="academy/financial-inclusion-infrastructure-problem.html" style="border-top-color:var(--teal);">
+      <div class="art-meta">
+        <span class="art-platform" style="color:var(--teal);">TechRoadmap.ai · Substack</span>
+        <span class="art-date">Jun 5, 2026</span>
+      </div>
+      <div class="art-pillar">Foundational Essay · Pillar 01 &amp; 03</div>
+      <div class="art-title">Financial Inclusion Is an Infrastructure Problem, Not an App Problem</div>
+      <div class="art-excerpt">The fintech industry keeps building better apps for users the rails don't reach. The framework for solving this starts before the first product decision is made.</div>
+      <span class="art-link" style="color:var(--teal);">Read the essay →</span>
+    </a>
+
+    <a class="article-card" href="academy/payment-rail-architectural-decision.html" style="border-top-color:var(--blue);">
+      <div class="art-meta">
+        <span class="art-platform" style="color:var(--blue);">TechRoadmap.ai</span>
+        <span class="art-date">Jun 5, 2026</span>
+      </div>
+      <div class="art-pillar">Pillar 01 · Building the Rails</div>
+      <div class="art-title">Why Payment Rail Selection Is an Architectural Decision, Not a Vendor Decision</div>
+      <div class="art-excerpt">The comparison spreadsheet gives you fees and uptime SLAs. It says nothing about the blast radius of a switch two years into production.</div>
+      <span class="art-link" style="color:var(--blue);">Read the essay →</span>
+    </a>
+
+    <a class="article-card" href="academy/ai-feature-vs-ai-native-platform.html" style="border-top-color:var(--violet);">
+      <div class="art-meta">
+        <span class="art-platform" style="color:var(--violet);">TechRoadmap.ai</span>
+        <span class="art-date">Jun 1, 2026</span>
+      </div>
+      <div class="art-pillar">Pillar 02 · AI-Native Platforms</div>
+      <div class="art-title">The Difference Between an AI Feature and an AI-Native Platform</div>
+      <div class="art-excerpt">Most "AI-powered" products are not AI-native. They are AI-surfaced. The distinction is architectural — and getting it wrong is expensive.</div>
+      <span class="art-link" style="color:var(--violet);">Read the essay →</span>
+    </a>
+
+  </div>
+</section>
+
+<!-- THE ACADEMY CALLOUT -->
+<div id="academy" class="academy-callout">
+  <div class="academy-left">
+    <div class="academy-eyebrow">TechRoadmap Academy</div>
+    <div class="academy-title">A school of thought, not a blog</div>
+    <div class="academy-desc">Six learning pillars. A growing framework library. Built for AI platform architects and fintech builders who want to think from first principles — not just follow the latest hype cycle.</div>
+    <div class="academy-stats">
+      <div>
+        <div class="a-stat-num">6</div>
+        <div class="a-stat-label">Learning pillars</div>
+      </div>
+      <div>
+        <div class="a-stat-num">45</div>
+        <div class="a-stat-label">Topics mapped</div>
+      </div>
+      <div>
+        <div class="a-stat-num">1</div>
+        <div class="a-stat-label">Framework library</div>
+      </div>
+    </div>
+  </div>
+  <div style="flex-shrink:0;">
+    <a class="btn-primary" href="academy/index.html" style="font-size:15px;padding:14px 28px;">Enter the Academy →</a>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" class="section" style="border-top:1px solid var(--border);">
+  <div class="section-header">
+    <div class="section-label" style="background:var(--violet-dim);color:var(--violet);">About</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-body">
+      <p>I am an <strong>AI platform architect and fintech infrastructure builder</strong> who has designed and built a multi-tenant financial infrastructure platform spanning <em>five markets</em>, integrating mobile money networks, cross-border payment corridors, PayFac models, BNPL engines, and AI-native tooling, all within a white-label, event-driven monorepo architecture.</p>
+      <p>I've also incorporated a multi-country holding structure and built the legal, compliance, and technical scaffolding most fintech teams take years and large budgets to assemble. That platform is <strong>Teddoh</strong>.</p>
+      <p>TechRoadmap is where I write about everything I've had to figure out — the architecture, the decisions, the market-specific constraints, and the honest realities of building as a founder-architect across multiple regulatory environments.</p>
+
+      <div class="build-list">
+        <div class="build-item"><span class="build-dot"></span>Multi-tenant payment infrastructure across five markets</div>
+        <div class="build-item"><span class="build-dot"></span>Payment provider, mobile money, and cross-border corridor integrations</div>
+        <div class="build-item"><span class="build-dot"></span>Multi-currency wallet, full transaction ledger, smart payout routing</div>
+        <div class="build-item"><span class="build-dot"></span>Consumer credit products, NFC payments, and POS hardware</div>
+        <div class="build-item"><span class="build-dot"></span>AI-native scheduling, credit decisioning, and document intelligence</div>
+        <div class="build-item"><span class="build-dot"></span>White-label SaaS infrastructure products</div>
+      </div>
+    </div>
+    <div class="about-right">
+      <div class="credential-card">
+        <div class="cred-label">Stack</div>
+        <div class="cred-val">Next.js 15 · React Native</div>
+        <div class="cred-sub">Supabase · Turborepo · pnpm</div>
+      </div>
+      <div class="credential-card">
+        <div class="cred-label">Architecture</div>
+        <div class="cred-val">Multi-tenant · Event-driven</div>
+        <div class="cred-sub">White-label · Domain-isolated</div>
+      </div>
+      <div class="credential-card">
+        <div class="cred-label">Markets</div>
+        <div class="cred-val">Multi-market · Multi-currency</div>
+        <div class="cred-sub">Five active markets</div>
+      </div>
+      <div class="credential-card">
+        <div class="cred-label">Writing since</div>
+        <div class="cred-val">2026 · Active</div>
+        <div class="cred-sub">Substack · LinkedIn · TechRoadmap Academy</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILLARS PREVIEW -->
+<section class="section" style="border-top:1px solid var(--border);padding-top:48px;">
+  <div class="section-header">
+    <div class="section-label" style="background:var(--amber-dim);color:var(--amber);">Six Pillars of Authority</div>
+    <div class="section-line"></div>
+    <a href="academy/index.html" style="font-size:13px;color:var(--teal);font-family:var(--mono);white-space:nowrap;">Full Academy →</a>
+  </div>
+  <div class="pillar-grid">
+    <a class="pillar-card" href="academy/pillar-01-building-the-rails.html" style="border-color:var(--teal);">
+      <span class="p-icon"><i class="ph ph-path"></i></span>
+      <div><div class="p-num">Pillar 01</div><div class="p-title">Building the Rails</div><div class="p-desc">Payment infrastructure at scale — ledger design, PayFac models, mobile money, payout routing</div></div>
+    </a>
+    <a class="pillar-card" href="academy/pillar-02-ai-native-platforms.html" style="border-color:var(--violet);">
+      <span class="p-icon"><i class="ph ph-brain"></i></span>
+      <div><div class="p-num">Pillar 02</div><div class="p-title">AI-Native Platforms</div><div class="p-desc">Architecture, not features — embedding intelligence at the infrastructure layer</div></div>
+    </a>
+    <a class="pillar-card" href="academy/pillar-03-financial-inclusion.html" style="border-color:var(--blue);">
+      <span class="p-icon"><i class="ph ph-globe-hemisphere-west"></i></span>
+      <div><div class="p-num">Pillar 03</div><div class="p-title">Financial Inclusion</div><div class="p-desc">The technical and structural reality behind serving the unbanked in underserved markets</div></div>
+    </a>
+    <a class="pillar-card" href="academy/pillar-04-platform-thinking.html" style="border-color:var(--amber);">
+      <span class="p-icon"><i class="ph ph-wrench"></i></span>
+      <div><div class="p-num">Pillar 04</div><div class="p-title">Platform Thinking</div><div class="p-desc">Multi-tenancy, white-label architecture, and designing systems others build on</div></div>
+    </a>
+    <a class="pillar-card" href="academy/pillar-05-builders-journey.html" style="border-color:#50d080;">
+      <span class="p-icon"><i class="ph ph-hammer"></i></span>
+      <div><div class="p-num">Pillar 05</div><div class="p-title">The Builder's Journey</div><div class="p-desc">Build-in-public narratives, architectural decisions, and the reality of building alone</div></div>
+    </a>
+    <a class="pillar-card" href="academy/pillar-06-entrepreneurship-gap.html" style="border-color:var(--amber);">
+      <span class="p-icon"><i class="ph ph-compass"></i></span>
+      <div><div class="p-num">Pillar 06</div><div class="p-title">The Entrepreneurship Gap</div><div class="p-desc">Imposter syndrome, talking vs. doing, and the honest realities of making the jump</div></div>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div>
+    <div class="footer-brand">TECHROADMAP.AI</div>
+    <div class="footer-tagline">Fintech/tech thought leadership · Built from the ledger</div>
+  </div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://techroadmap.substack.com" target="_blank">Substack</a>
+    <a class="footer-link" href="https://www.linkedin.com/in/yaya-bamba-ai/" target="_blank">LinkedIn</a>
+    <a class="footer-link" href="academy/index.html">Academy</a>
+    <a class="footer-link" href="https://teddoh.com" target="_blank">teddoh.com</a>
+    <a class="footer-link" href="https://teddoh.io" target="_blank">teddoh.io</a>
+  </div>
+</footer>
+
+</body>
+<script>
+(function(){
+  var h=document.documentElement,b=document.getElementById('theme-toggle');
+  function apply(t){h.dataset.theme=t;var i=b.querySelector('i');i.className=t==='dark'?'ph ph-sun':'ph ph-moon';}
+  apply(h.dataset.theme||'dark');
+  b.addEventListener('click',function(){var n=h.dataset.theme==='dark'?'light':'dark';localStorage.setItem('theme',n);apply(n);});
+})();
+</script>
+</html>
